@@ -1,0 +1,27 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x64-Clang-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "clang_cl_x64_x64" ],
+      "variables": [
+        {
+          "name": "CMAKE_C_COMPILER",
+          "value": "C:/_Programming/Visual Studio/VC/Tools/Llvm/x64/bin/clang.exe",
+          "type": "FILEPATH"
+        },
+        {
+          "name": "CMAKE_CXX_FLAGS",
+          "value": "-m64 -std=c++20 -fdiagnostics-absolute-paths",
+          "type": "STRING"
+        }
+      ]
+    }
+  ]
+}
