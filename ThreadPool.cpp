@@ -46,7 +46,8 @@ void ThreadPool<T>::PerformWork()
 		// just incase this is called at the time
 		// time as another thread we dont want to create
 		// more threads than allowed
-		std::unique_lock<std::mutex> lock(_locker);
+		std::lock_guard<std::mutex> lock(_locker);
+
 		auto consumer = [this](SentinelToken& token) {
 			WorkConsumer(token);
 		};
@@ -67,7 +68,7 @@ template <typename T>
 requires std::derived_from<T, WorkItem>
 void ThreadPool<T>::Wait()
 {
-	std::unique_lock<std::mutex> lock(_locker);
+	std::lock_guard<std::mutex> lock(_locker);
 	for (auto &thread : threads)
 	{
 		if (thread.joinable())
