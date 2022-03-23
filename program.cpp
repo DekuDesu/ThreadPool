@@ -27,9 +27,9 @@ public:
 };
 
 int main() {
-    ThreadPool<Work> pool(4);
+    ThreadPool<Work> pool(std::thread::hardware_concurrency() - 1);
 
-    for (size_t i = 0; i < 1000000; i++) {
+    for (size_t i = 0; i < 10000; i++) {
         pool.EnqueueWork(Work(std::to_string(i) + '\n'));
     }
 
