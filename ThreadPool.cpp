@@ -41,15 +41,18 @@ template <typename T>
 requires std::derived_from<T, WorkItem>
 void ThreadPool<T>::PerformWork()
 {
-	// just incase this is called at the time
-	// time as another thread we dont want to create
-	// more threads than allowed
-	std::unique_lock<std::mutex> lock(_locker);
-	auto consumer = [this](SentinelToken& token) {
-		WorkConsumer(token);
-	};
-	while (threadCount.fetch_add(1) < maxThreads) {
-		threads.push_back(std::thread(consumer, std::ref(cancellationToken)));
+	if (workQueue.Count())
+	{
+		// just incase this is called at the time
+		// time as another thread we dont want to create
+		// more threads than allowed
+		std::unique_lock<std::mutex> lock(_locker);
+		auto consumer = [this](SentinelToken& token) {
+			WorkConsumer(token);
+		};
+		while (threadCount.fetch_add(1) < maxThreads) {
+			threads.push_back(std::thread(consumer, std::ref(cancellationToken)));
+		}
 	}
 }
 

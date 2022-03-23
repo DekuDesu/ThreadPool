@@ -3,8 +3,11 @@
 #include "ThreadPool.h"
 #include "ThreadPool.cpp"
 #include "ConcurrentQueue.cpp"
+#include <string>
 
 std::mutex _coutLocker;
+
+std::atomic<size_t> counter;
 
 class Work : public WorkItem {
 private:
@@ -15,10 +18,11 @@ public:
     // Inherited via WorkItem
     bool PerformWork(SentinelToken& token) override {
 
-        // pretty sure cout isn't thread safe
-        // the cppref wasn't clear
-        std::unique_lock<std::mutex> lock(_coutLocker);
-        std::cout << word;
+        //// pretty sure cout isn't thread safe
+        //// the cppref wasn't clear
+        //std::unique_lock<std::mutex> lock(_coutLocker);
+        //std::cout << counter.fetch_add(1) << '\n';
+        counter.fetch_add(1);
         return true;
     }
 };
@@ -26,7 +30,7 @@ public:
 int main() {
     ThreadPool<Work> pool(4);
 
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 1111; i++) {
         pool.EnqueueWork(Work(std::to_string(i) + '\n'));
     }
 
@@ -37,6 +41,10 @@ int main() {
     pool.CancelWork();
 
     pool.Wait();
+
+    std::cout << "Final Value: " << counter.load();
+
+    // 1: 49196, 55470
 
     return 0;
 }
