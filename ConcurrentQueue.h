@@ -16,6 +16,5 @@ public:
 	ConcurrentQueue() {}
 	virtual size_t Count(void);
 	virtual T Pop(void);
-	virtual bool TryPop(T* out_value);
 	virtual void Push(T value);
 };
