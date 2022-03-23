@@ -20,9 +20,8 @@ public:
 
         //// pretty sure cout isn't thread safe
         //// the cppref wasn't clear
-        //std::unique_lock<std::mutex> lock(_coutLocker);
-        //std::cout << counter.fetch_add(1) << '\n';
-        counter.fetch_add(1);
+        std::unique_lock<std::mutex> lock(_coutLocker);
+        std::cout << counter.fetch_add(1) << '\n';
         return true;
     }
 };
@@ -30,7 +29,7 @@ public:
 int main() {
     ThreadPool<Work> pool(4);
 
-    for (size_t i = 0; i < 1111; i++) {
+    for (size_t i = 0; i < 1000000; i++) {
         pool.EnqueueWork(Work(std::to_string(i) + '\n'));
     }
 
@@ -43,8 +42,6 @@ int main() {
     pool.Wait();
 
     std::cout << "Final Value: " << counter.load();
-
-    // 1: 49196, 55470
 
     return 0;
 }
